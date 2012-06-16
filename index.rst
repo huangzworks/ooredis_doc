@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 OORedis 项目文档
-========================================
+===================
 
 
 安装 OORedis
@@ -14,6 +14,15 @@ OORedis 项目文档
    :maxdepth: 2
 
    install
+
+
+快速入门
+---------------
+
+.. toctree::
+   :maxdepth: 2
+
+   quick_intro
 
 
 底层实现 API
