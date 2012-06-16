@@ -18,7 +18,7 @@
   `https://github.com/andymccurdy/redis-py
   <https://github.com/andymccurdy/redis-py>`_
 
-- nosetest 1.1.2 或以上版本 ： 
+- nosetest 1.1.2 或以上版本(用于测试) ： 
   `http://nose.readthedocs.org <http://nose.readthedocs.org>`_
 
 
