@@ -2,13 +2,6 @@
 =========
 
 
-这个小节会告诉你如何使用 OORedis 的基本功能，
-以及这些功能是如何让 Python 操作 Redis 变得简单的。
-
-
-连接 Redis
----------------
-
 在使用 OORedis 之前，需要先使用 ``connect`` 函数连接到 Redis 服务器：
 
 ::
@@ -77,7 +70,8 @@ OORedis 将 Redis 的各个相关的命令组合成一个个 Key 类，
     'value-of-the-string-key'
 
 除了 ``String`` 类之外， OORedis 还有其他几个 Key 类，
-分别表示不同用途的几个数据结构：
+分别表示不同用途的几个数据结构，
+以下是 OORedis 的所有 Key 类：
 
 - ``String`` 类： 保存字符串值，常用于缓存操作
 
@@ -239,17 +233,176 @@ OORedis 将 Redis 的各个相关的命令组合成一个个 Key 类，
 可以看到，
 ``Dict`` 类实际上执行的工作和调用 redis-py 执行 ``HSET`` 或者 
 ``HGET`` 命令没有什么两样，
-但比起使用 redis-py ， ``Dict`` 处理数据的方式更有 Pythonic 味 ，
+但比起使用 redis-py ， ``Dict`` 处理数据的方式更 Pythonic  ，
 也更简单快捷。
 
+
+自动类型转换
+----------------
+
+在 Redis 中，所有输入都会被转换成字符类型，
+因此，每次使用 redis-py 在数据库进行读取操作时，
+都要对取出的数据进行类型转换：
+
+::
+
+    >>> r = Redis()
+
+    >>> r.hset('type', 'int', 10086)
+    1L
+    >>> r.hset('type', 'float', 3.14)
+    1L
+    >>> r.hset('type', 'str', 'hello, world!')
+    1L
+
+    >>> r.hmget('type', 'int', 'float', 'str')      # 所有数据都被转换成了字符串
+    ['10086', '3.14', 'hello, world!']
+
+    >>> int(r.hget('type', 'int'))
+    10086
+    >>> float(r.hget('type', 'float'))
+    3.14
+    >>> r.hget('type', 'str')
+    'hello, world!'
+
+频繁的类型转换工作不仅让人厌烦，
+而且非常容易出错。
+
+为了解决这个问题， OORedis 增加了一种称为 TypeCase 的类型转换机制，
+TypeCase 可以在创建 Key 对象时通过 ``type_case`` 参数传入，
+通过指定各种不同的 TypeCase 类，
+OORedis 可以在写入和读取的时候自动对数据进行类型转换：
+
+::
+
+    >>> from ooredis.type_case import GenericTypeCase
+
+    >>> t = Dict('ooredis-type', type_case=GenericTypeCase)
+
+    >>> t['int'] = 10086
+    >>> t['float'] = 3.14
+    >>> t['str'] = 'hello, world'
+
+    >>> dict(t)
+    {'int': 10086, 'float': 3.14, 'str': 'hello, world'}
+
+    >>> type(t['int'])
+    <type 'int'>
+    >>> type(t['float'])
+    <type 'float'>
+    >>> type(t['str'])
+    <type 'str'>
+
+在上面的代码例子中，
+``Dict`` 实例接受了 ``GenericTypeCase`` 作为 ``type_case`` 参数，
+``GenericTypeCase`` 接受 ``int`` 、 ``float`` 、 ``str`` 、 ``unicode`` 
+四种类型的值，并且在取出数据时将数据转换回原来的类型。
+
+顺带一提，因为 ``GenericTypeCase`` 是所有 Key 对象的默认 ``type_case`` 值，
+因此，前面的代码例子也可以简单地表示为：
+
+::
+
+    >>> t = Dict('ooredis-type')
+
+    >>> ...
+
+除了 ``GenericTypeCase`` 之外，
+OORedis 还内置了其他一些 TypeCase 类，
+分别可以用于不同类型的值的转换：
+
+- ``IntTypeCase`` ：接受整数值、或者表示为整数值的字符串值（比如 ``"10086"`` ），
+  并返回整数值。
+
+- ``FloatTypeCase`` ：接受浮点数值、
+  或者表示为整数值的字符串值（比如 ``"3.14"`` ），
+  并返回浮点数值。
+
+- ``JsonTypeCase`` ：接受 JSON 类型的值，并返回 JSON 类型的值。
+
+- ``SerializeTypeCase`` ：使用 Python 的 ``Pickle`` 模块，
+  可以将 Python 对象保存在 Redis 数据库中，
+  并在取出的时候自动还原成 Python 对象。
+
+- ``StringTypeCase`` ：接受 ``str`` 或者 ``uncide`` 类型的值，
+  并在取出的时候将输入值转换成原来的类型。
+
+如果这些 TypeCase 类都不符合你的要求，
+你还可以编写自己的 TypeCase 类，
+在稍后的文档里会介绍编写 TypeCase 类的方法。
+
+
+内置文档
+---------
+
+经过前面几个小节的介绍，
+我想你已经准备好载入 OORedis 库，
+并开始进行荒野求生式的探险了。
+
+但是，先等等，别着急，还有一样很重要的工具还没介绍给你，
+那就是 OORedis 的内置文档。
+
+在 OORedis 里，
+所有的函数、类和方法，都带有详细的内置文档，
+这些文档很好地记录了函数/方法的参数、返回值、时间复杂度和可能抛出的异常，
+如果在探险的过程中遇上什么问题，可以随时查阅这些文档：
+
+::
+
+    Help on class Dict in module ooredis.mix.dict:
+
+    class Dict(ooredis.mix.key.Key, _abcoll.MutableMapping)
+    |  一个字典对象，底层是 Redis 的 Hash 结构。
+    |  
+    |  Method resolution order:
+    |      Dict
+    |      ooredis.mix.key.Key
+    |      _abcoll.MutableMapping
+    |      _abcoll.Mapping
+    |      _abcoll.Sized
+    |      _abcoll.Iterable
+    |      _abcoll.Container
+    |      __builtin__.object
+    |  
+    |  Methods defined here:
+    |  
+    |  __delitem__(*args, **kwargs)
+    |      删除字典键 key 的值。
+    |      如果键 key 的值不存在，那么抛出 KeyError 。
+    |      
+    |      Args:
+    |          key
+    |      
+    |      Time:
+    |          O(1)
+    |      
+    |      Returns:
+    |          None
+    |      
+    |      Raises:
+    |          KeyError: key 不存在时抛出。
+    |          TypeError: Key 对象不是 Dict 类型时抛出。
+    |  
+    |  __getitem__(*args, **kwargs)
+    |      返回字典中键 key 的值。
+    |      如果键 key 在字典中不存在，那么抛出 KeyError 。
+    |      
+    |      Args:
+
+    ...
+    
 
 小结
 -----
 
-在这个快速入门小节中，我们看到了如何通过 ``connect`` 函数连接 Redis 服务器，
+在这个快速入门章节中，我们看到了如何通过 ``connect`` 函数连接 Redis 服务器，
 知道了 OORedis 各个 Key 类的大概作用，
 并且练习了怎样使用 ``Dict`` 实现论坛的发贴和读贴功能，
-希望你已经对 OORedis 是什么以及能做什么有了大概的感觉，
+看到了如何使用 TypeCase 进行自动类型转换，等等。
+
+希望你通过这些简短的介绍，
+能对 OORedis 是什么以及能做什么有了大概的感觉。
+
 在接下来的部分，
 文档会陆续介绍 OORedis 的其他 Key 类，
 你将看到 OORedis 是怎样用简单快捷的方式来解决各种实际问题的。
