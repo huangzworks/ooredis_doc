@@ -9,8 +9,8 @@
     >>> from ooredis import *
     >>> connect()
 
-因为 OORedis 的 ``connect`` 函数实际上的工作就是创建一个 redis-py 库
-的 ``redis.Redis`` 对象的实例，
+因为 OORedis 的 ``connect`` 函数实际上的工作就是创建一个 redis-py 
+库的 ``redis.Redis`` 对象的实例，
 因此，任何用于 ``redis.Redis`` 的参数都可以作为 ``connect`` 函数的参数。
 
 比如说，通过 ``db`` 参数，可以指定所使用的数据库编号：
@@ -28,7 +28,7 @@
 诸如此类。
 
 
-你好， Key 对象！
+你好， Key 类！
 -------------------
 
 在 Redis 中，所有的操作都是针对命令，以及 key 名来进行的：
@@ -41,10 +41,11 @@
     redis> GET 'a-string-key'
     "value-of-the-string-key"
 
-上面的这段代码通过 ``SET`` 命令完成了一次
-对 key 名为 ``a-string-key`` 的字符串设置操作。
+上面的这段代码通过 ``SET`` 命令完成了一次对
+key 名为 ``a-string-key`` 的字符串设置操作。
 
-在 redis-py 库中，同样的操作可以通过调用 ``Redis`` 对象的 ``set`` 和 ``get`` 方法来进行：
+在 redis-py 库中，
+同样的操作可以通过调用 ``Redis`` 对象的 ``set`` 和 ``get`` 方法来进行：
 
 ::
 
@@ -55,12 +56,13 @@
     >>> r.get('a-string-key')
     'value-of-the-string-key'
 
-OORedis 将 Redis 的各个相关的命令组合成一个个 Key 类，
+OORedis 的做法是，
+将 Redis 的各个相关的命令组合成一个个 Key 类，
 每个 Key 类都接受一个 key 名作为参数，
 通过调用 Key 类的不同方法来对 key 进行各种操作。
 
-以下是使用 String 类在 OORedis 中对
-字符串 key ``a-string-key`` 进行 ``get`` 和 ``set`` 操作的方法：
+举例来说，以下是使用 String 类在 OORedis 
+中对字符串 key ``a-string-key`` 进行 ``get`` 和 ``set`` 操作的方法：
 
 ::
 
@@ -85,13 +87,17 @@ OORedis 将 Redis 的各个相关的命令组合成一个个 Key 类，
 
 - ``SortedSet`` 类： 有序集合，常用于排名或频率统计
 
-为了保证这个『快速入门』真的足够『快速』，
-这里只给出一个简单的例子来展示 ``Dict`` 类的功能，
-至于其他类，在文档的后续部分会给出详细的介绍。
-
 
 实例：用 Dict 类实现论坛发贴
 -------------------------------------------
+
+上一节列出了 OORedis 中的所有 Key 类，
+为了让这个快速入门章节保持简单，
+在这一节，
+我们通过一个简单的例子来学习如何使用 OORedis 提供的 Key
+类来解决给定的问题，
+在文档的后续部分，
+我们再接着详细地深入探讨各个 Key 类。
 
 假设你正在构建一个论坛，
 其中每个帖子的数据可以用
@@ -106,8 +112,75 @@ OORedis 将 Redis 的各个相关的命令组合成一个个 Key 类，
 10088   "PyConf 2012"            "john"      "PyConf 2012 video download ..."
 ====== ======================== ========== ====================================
 
-很明显，你需要使用 OORedis 里的某个 Key 类来完成将数据保存到数据库的工作，
-作为例子，上面的帖子数据可以通过执行以下表达式来保存：
+观察表里面的数据可以会发现，
+这些数据都是可以由一个唯一的 ``id`` 标识，
+至于其他三个属性 ``title`` 、 ``author`` 和 ``content`` ，
+则分别对应一个值。
+
+在 Redis 中保存这种『键-值对』（key-value pair）形式的数据，
+最适合的方法就是使用 Hash 结构，
+在 OORedis 中，
+操作 Hash 结构的函数都被很好地映射到 ``Dict`` 类的方法当中。
+
+比如说，以下是 Redis 中一个使用 ``hset`` 和 ``hget`` 的例子：
+
+::
+
+    redis 127.0.0.1:6379> HSET redis-key hash-key hash-value
+    (integer) 1
+
+    redis 127.0.0.1:6379> HGET redis-key hash-key
+    "hash-value"
+
+而这两个操作同样可以使用 OORedis 来完成：
+
+::
+
+    >>> d = Dict('redis-key')
+
+    >>> d['hash-key'] = 'hash-value'
+
+    >>> d['hash-key']
+    'hash-value'
+
+以上的 OORedis 操作和之前的 Redis 操作完成的是一样的工作，
+不同的是，
+``Dict`` 类将使用 Hash 结构的方式变得像使用 Python 
+内置的 ``dict`` 对象一样简单。
+
+当然，
+虽然 ``Dict`` 类的和内置的 ``dict`` 对象的操作非常相似，
+但是它们之间有一个非常显著的区别，那就是：
+``dict`` 只将数据保存在内存中，
+而 ``Dict`` 则是通过写入和读取 Redis 数据库来保存和读取数据。
+
+比如说，我们可以创建一个新的 ``Dict`` 对象，
+并往里面写入一些数据，
+这些数据就会被写入到 Redis 数据库中：
+
+::
+
+    >>> project = Dict("ooredis")
+
+    >>> project['name'] = "OORedis"
+    >>> project['language'] = "Python"
+    >>> project['type'] = "Database Mapper"
+
+可以在 Redis 中使用命令来确认这一点：
+
+::
+
+    redis 127.0.0.1:6379> HGETALL ooredis
+    1) "name"
+    2) "OORedis"
+    3) "language"
+    4) "Python"
+    5) "type"
+    6) "Database Mapper"
+
+好的，对 ``Dict`` 类的介绍暂时就到此为止，
+既然已经知道 ``Dict`` 类的使用方式，
+那么现在可以将之前的帖子数据都通过 ``Dict`` 类保存起来了：
 
 ::
 
@@ -126,38 +199,22 @@ OORedis 将 Redis 的各个相关的命令组合成一个个 Key 类，
     >>> t_10088['author'] = "john"
     >>> t_10088['content'] = "PyConf 2012 video download ..."
 
-``Dict`` 类的操作和 Python 内置的 ``set`` 对象的操作几乎一模一样，
-其中的一个不同点是， ``Dict`` 不仅仅将数据保留在内存里，
-它还会将赋值给 ``Dict`` 实例的数据保存到 ``Redis`` 数据库里，
-可以通过命令在 Redis 里确认这一点：
+以上表达式在 redis-py 中实际执行以下命令：
 
 ::
 
-    redis> HGETALL 10086
-    1) "title"
-    2) "say hello to OORedis"
-    3) "author"
-    4) "huangz"
-    5) "content"
-    6) "xyz..."
+    >>> r.hset(10086, 'title', 'say hello to OORedis')    # r 是 redis.Redis 对象的实例
+    1L
+    >>> r.hset(10086, 'author', 'huangz')
+    1L
+    >>> r.hset(10086, 'content', 'xyz...')
+    1L
 
-    redis> HGETALL 10087
-    1) "title"
-    2) "how to install Redis?"
-    3) "author"
-    4) "newbie"
-    5) "content"
-    6) "how to install ..."
+    >>> r.hset(10087, 'title', 'how to install Redis?')
+    1L
+    >>> # ...
 
-    redis> HGETALL 10088
-    1) "title"
-    2) "PyConf 2012"
-    3) "author"
-    4) "john"
-    5) "content"
-    6) "PyConf 2012 video download ..."
-
-这个创建帖子的动作可以抽象为一个函数 ``create_topic`` ：
+可以将这个创建帖子的动作抽象为一个函数 ``create_topic`` ：
 
 ::
 
@@ -179,8 +236,8 @@ OORedis 将 Redis 的各个相关的命令组合成一个个 Key 类，
         )
     >>>
 
-这时可以通过使用 ``id`` 来实例化一个 ``Dict`` 对象，
-用于查看帖子的各个属性：
+通过将一个已存在的 ``id`` 作为 ``key`` 传入 ``Dict`` 对象，
+可以查看这个帖子的各个属性：
 
 ::
 
@@ -195,7 +252,20 @@ OORedis 将 Redis 的各个相关的命令组合成一个个 Key 类，
     >>> t['content']
     'OORedis is a ...'
 
-以上查看帖子的动作同样可以抽象成一个 ``read_topic`` 函数：
+以上表达式在 redis-py 中实际执行以下命令：
+
+::
+    
+    >>> r.hget(10089, 'title')    # r 是 redis.Redis 对象的实例
+    'welcome to OORedis document'
+
+    >>> r.hget(10089, 'author')
+    'huangz'
+
+    >>> r.hget(10089, 'content')
+    'OORedis'
+
+查看帖子的动作同样可以抽象成一个 ``read_topic`` 函数：
 
 ::
 
@@ -206,9 +276,9 @@ OORedis 将 Redis 的各个相关的命令组合成一个个 Key 类，
         else:
             raise Exception("topic not found")
 
-``read_topic`` 中的 ``topic.exists`` 用于检查帖子是否存在，
-效果等同于执行 Redis 命令 ``EXISTS`` ，
-如果指定的帖子存在，那么将帖子的数据转换成一个字典并返回，
+``read_topic`` 中的 ``topic.exists`` 用于检查帖子 ``id`` 是否存在，
+效果等同于执行 Redis 的 ``EXISTS`` 命令，
+如果指定的 ``id`` 存在，那么将帖子的数据转换成一个字典并返回，
 否则的话，就抛出一个异常。
 
 试试使用 ``read_topic`` 查看刚刚创建的帖子：
@@ -216,8 +286,9 @@ OORedis 将 Redis 的各个相关的命令组合成一个个 Key 类，
 ::
 
     >>> read_topic(10089)
-    {'content': 'OORedis is a ...', 'author': 'huangz', 'title': 'welcome to
-    OORedis document!'}
+    {'content': 'OORedis is a ...',
+     'author': 'huangz',
+     'title': 'welcome to OORedis document!'}
 
 试试使用 ``read_topic`` 查看一个不存在的帖子：
 
@@ -283,8 +354,10 @@ OORedis 可以在写入和读取的时候自动对数据进行类型转换：
     >>> t['float'] = 3.14
     >>> t['str'] = 'hello, world'
 
-    >>> dict(t)
-    {'int': 10086, 'float': 3.14, 'str': 'hello, world'}
+    >>> dict(t)                 # 所有值的类型不变
+    {'int': 10086,
+     'float': 3.14,
+     'str': 'hello, world'}
 
     >>> type(t['int'])
     <type 'int'>
@@ -299,7 +372,7 @@ OORedis 可以在写入和读取的时候自动对数据进行类型转换：
 四种类型的值，并且在取出数据时将数据转换回原来的类型。
 
 顺带一提，因为 ``GenericTypeCase`` 是所有 Key 对象的默认 ``type_case`` 值，
-因此，前面的代码例子也可以简单地表示为：
+因此，前面的代码例子也可以简化为：
 
 ::
 
