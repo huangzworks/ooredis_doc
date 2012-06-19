@@ -30,6 +30,6 @@ Subpackages
 
 .. toctree::
 
-    ooredis.mix
+    ooredis.key
     ooredis.type_case
 

@@ -32,7 +32,7 @@ OORedis 项目文档
    :maxdepth: 2
    
    api/modules
-   api/ooredis.mix.rst
+   api/ooredis.key.rst
    api/ooredis
    api/ooredis.type_case
 
