@@ -32,6 +32,7 @@ OORedis 项目文档
    :maxdepth: 2
 
    base_key
+   string
 
 
 底层实现 API
