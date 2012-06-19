@@ -25,6 +25,15 @@ OORedis 项目文档
    quick_intro
 
 
+深入 Key 类型
+-------------------
+
+.. toctree::
+   :maxdepth: 2
+
+   base_key
+
+
 底层实现 API
 ---------------
 
