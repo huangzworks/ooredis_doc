@@ -75,6 +75,9 @@ OORedis 的所有 Key 类有一个共同的基类（base class），
     >>>                 # 因为 key 不存在，所以返回 None
 
 
+更多信息
+----------
+
 以上就是 ``BaseKey`` 类的基本介绍，
 更详细的 API 信息可以参考《底层实现 API》章节的 `base_key
 <./api/ooredis.key.html#module-ooredis.key.base_key>`_ 部分。
