@@ -126,10 +126,10 @@ OORedis 的做法是，
 
 ::
 
-    redis 127.0.0.1:6379> HSET redis-key hash-key hash-value
+    redis> HSET redis-key hash-key hash-value
     (integer) 1
 
-    redis 127.0.0.1:6379> HGET redis-key hash-key
+    redis> HGET redis-key hash-key
     "hash-value"
 
 而这两个操作同样可以使用 OORedis 来完成：
@@ -170,7 +170,7 @@ OORedis 的做法是，
 
 ::
 
-    redis 127.0.0.1:6379> HGETALL ooredis
+    redis> HGETALL ooredis
     1) "name"
     2) "OORedis"
     3) "language"
