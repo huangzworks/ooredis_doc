@@ -3,29 +3,21 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-OORedis 项目文档
+OORedis 文档
 ===================
 
 
-安装 OORedis
+简介
 ---------------
 
 .. toctree::
    :maxdepth: 2
 
    install
-
-
-快速入门
----------------
-
-.. toctree::
-   :maxdepth: 2
-
    quick_intro
 
 
-深入 Key 类型
+深入 Key 对象
 -------------------
 
 .. toctree::
