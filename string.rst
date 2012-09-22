@@ -1,48 +1,39 @@
 String
 ===========
 
-``String`` 类，类如其名，
-它的工作就是负责从 Redis 数据库中写入或读取字符串值。
-
-除了从 ``BaseKey`` 里继承来的那些方法之外，
-``String`` 类还实现了 ``set`` 、 ``setex`` 、
-``setnx`` 、 ``get`` 和 ``getset`` 五个方法。
+``String`` 类的工作是负责从 Redis 数据库中写入或读取字符串值，
+它最主要的几个方法是 ``set`` 、 ``setex`` 、 ``setnx`` 、 ``get`` 和 ``getset`` 。
 
 以下代码演示了如何使用 ``String`` 类：
 
 ::
 
-    >>> s = String('str')
+    >>> from ooredis import String
 
-    >>> dir(s)
+    >>> dir(String)
     ['__class__', '__delattr__', '__dict__', '__doc__', '__eq__', '__format__',
     '__getattribute__', '__hash__', '__init__', '__module__', '__new__',
     '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__',
-    '__str__', '__subclasshook__', '__weakref__', '_client', '_represent',
-    '_type_case', 'delete', 'exists', 'expire', 'expireat', 'get', 'getset',
-    'name', 'persist', 'set', 'setex', 'setnx', 'ttl']
+    '__str__', '__subclasshook__', '__weakref__', '_represent', 'delete', 'exists',
+    'expire', 'expireat', 'get', 'getset', 'persist', 'set', 'setex', 'setnx', 'ttl']
 
-    >>> s.get()                                     # 不存在的 key 返回 None
+    >>> s = String('greeting')
 
-    >>> s.set("i'm a string!")                      # 给 key 设置值
+    >>> s.get()                     # 没有值，返回 None
 
-    >>> s.get()                                     # 返回 key 值
-    "i'm a string!"
+    >>> s.set('hello world!')
 
-    >>> s.setnx("this message will not be set")     # setnx 只会在 key 不存在时设置值
-    False
+    >>> s.get()
+    'hello world!'
 
-    >>> s.setex("i'm a string with ttl", 10086)     # setex 设置值和生存时间
-    True
+    >>> s.getset('good morning!')
+    'hello world!'
 
-    >>> s.ttl                                       # 生存时间
-    10084L
-
-    >>> s.getset("new string here!")                # getset 设置新值并返回旧值
-    "i'm a string with ttl"
+    >>> s.get()
+    'good morning!'
 
 
-实例：使用 String 类配合 TypeCase 类保存不同类型的值
+实例：配合 TypeCase 类保存不同类型的值
 --------------------------------------------------------
 
 有些时候，除了保存单个的字符串值之外，
@@ -124,7 +115,7 @@ String
 ``Json`` 类将所得的 JSON 对象转换回原来的 Python 类型。
 
 
-实例：使用 String 实现缓存（caching）
+实例：缓存（caching）
 -----------------------------------------
 
 缓存是 Redis 的 string 结构的常见用法之一，
