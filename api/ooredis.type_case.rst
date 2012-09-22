@@ -8,6 +8,7 @@ type_case Package
     :members:
     :undoc-members:
     :show-inheritance:
+    :private-members:
 
 :mod:`float_type_case` Module
 -----------------------------
@@ -16,6 +17,7 @@ type_case Package
     :members:
     :undoc-members:
     :show-inheritance:
+    :private-members:
 
 :mod:`generic_type_case` Module
 -------------------------------
@@ -24,14 +26,7 @@ type_case Package
     :members:
     :undoc-members:
     :show-inheritance:
-
-:mod:`helper` Module
---------------------
-
-.. automodule:: ooredis.type_case.helper
-    :members:
-    :undoc-members:
-    :show-inheritance:
+    :private-members:
 
 :mod:`int_type_case` Module
 ---------------------------
@@ -40,6 +35,7 @@ type_case Package
     :members:
     :undoc-members:
     :show-inheritance:
+    :private-members:
 
 :mod:`json_type_case` Module
 ----------------------------
@@ -48,6 +44,7 @@ type_case Package
     :members:
     :undoc-members:
     :show-inheritance:
+    :private-members:
 
 :mod:`serialize_type_case` Module
 ---------------------------------
@@ -56,6 +53,7 @@ type_case Package
     :members:
     :undoc-members:
     :show-inheritance:
+    :private-members:
 
 :mod:`string_type_case` Module
 ------------------------------
@@ -64,4 +62,5 @@ type_case Package
     :members:
     :undoc-members:
     :show-inheritance:
+    :private-members:
 

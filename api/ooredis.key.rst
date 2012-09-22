@@ -8,6 +8,8 @@ key Package
     :members:
     :undoc-members:
     :show-inheritance:
+    :private-members:
+    :special-members:
 
 :mod:`counter` Module
 ---------------------
@@ -16,6 +18,7 @@ key Package
     :members:
     :undoc-members:
     :show-inheritance:
+    :special-members:
 
 :mod:`deque` Module
 -------------------
@@ -24,6 +27,7 @@ key Package
     :members:
     :undoc-members:
     :show-inheritance:
+    :special-members:
 
 :mod:`dict` Module
 ------------------
@@ -32,6 +36,7 @@ key Package
     :members:
     :undoc-members:
     :show-inheritance:
+    :special-members:
 
 :mod:`helper` Module
 --------------------
@@ -40,6 +45,7 @@ key Package
     :members:
     :undoc-members:
     :show-inheritance:
+    :special-members:
 
 :mod:`set` Module
 -----------------
@@ -48,6 +54,7 @@ key Package
     :members:
     :undoc-members:
     :show-inheritance:
+    :special-members:
 
 :mod:`sorted_set` Module
 ------------------------
@@ -56,6 +63,7 @@ key Package
     :members:
     :undoc-members:
     :show-inheritance:
+    :special-members:
 
 :mod:`string` Module
 --------------------
@@ -64,6 +72,7 @@ key Package
     :members:
     :undoc-members:
     :show-inheritance:
+    :special-members:
 
 :mod:`common_key_property_mixin` Module
 --------------------------------------------
@@ -72,6 +81,7 @@ key Package
     :members:
     :undoc-members:
     :show-inheritance:
+    :special-members:
 
 :mod:`set_and_get_op_mixin` Module
 --------------------------------------------
@@ -80,3 +90,4 @@ key Package
     :members:
     :undoc-members:
     :show-inheritance:
+    :special-members:
