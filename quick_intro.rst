@@ -99,7 +99,7 @@ OORedis 的做法是，
 在文档的后续部分，
 我们再接着详细地深入探讨各个 Key 类。
 
-假设你正在构建一个论坛，
+假设我们正在构建一个论坛，
 其中每个帖子的数据可以用
 ``id`` 、 ``title`` 、 ``author`` 和 ``content`` 四个属性来表示，
 比如这样：
@@ -199,21 +199,6 @@ OORedis 的做法是，
     >>> t_10088['author'] = "john"
     >>> t_10088['content'] = "PyConf 2012 video download ..."
 
-以上表达式在 redis-py 中实际执行以下命令：
-
-::
-
-    >>> r.hset(10086, 'title', 'say hello to OORedis')    # r 是 redis.Redis 对象的实例
-    1L
-    >>> r.hset(10086, 'author', 'huangz')
-    1L
-    >>> r.hset(10086, 'content', 'xyz...')
-    1L
-
-    >>> r.hset(10087, 'title', 'how to install Redis?')
-    1L
-    >>> # ...
-
 可以将这个创建帖子的动作抽象为一个函数 ``create_topic`` ：
 
 ::
@@ -290,19 +275,8 @@ OORedis 的做法是，
      'author': 'huangz',
      'title': 'welcome to OORedis document!'}
 
-试试使用 ``read_topic`` 查看一个不存在的帖子：
-
-::
-
-    >>> read_topic(123456789)
-    Traceback (most recent call last):
-    File "<stdin>", line 1, in <module>
-    File "<stdin>", line 6, in read_topic
-    Exception: topic not found
-
 以上就是一个简单的使用 ``Dict`` 类来创建和阅读论坛帖子的例子，
-可以看到，
-``Dict`` 类实际上执行的工作和调用 redis-py 执行 ``HSET`` 或者 
+从原理上讲， ``Dict`` 类实际上执行的工作和调用 redis-py 执行 ``HSET`` 或者 
 ``HGET`` 命令没有什么两样，
 但比起使用 redis-py ， ``Dict`` 处理数据的方式更 Pythonic  ，
 也更简单快捷。
