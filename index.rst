@@ -66,7 +66,7 @@ Type Case 类
 
 OORedis 项目地址： `https://github.com/huangz1990/ooredis <https://github.com/huangz1990/ooredis>`_
 
-本文当项目地址： `https://github.com/huangz1990/ooredis_doc <https://github.com/huangz1990/ooredis_doc>`_ 
+本文档项目地址： `https://github.com/huangz1990/ooredis_doc <https://github.com/huangz1990/ooredis_doc>`_ 
 
 
 索引和目录
